@@ -120,7 +120,7 @@ class BasePlate:
 
         if Case == 2 or Case == 3:
             A1_req = P_u / (2 * fi * 0.85 * f_c)
-        return round(A1_req,0)
+        return math.ceil(A1_req)
 
     def FindPlateDimensions(self,d : float, b_f : float, A1_req : float)-> int:
         delta = (0.95 * d - 0.8 * b_f) / 2
@@ -220,12 +220,15 @@ class BasePlate:
         n_lamb = lamb * (d * b_f)**0.5 / 4
         return max(m,n,n_lamb)
 
-    def BasePlateThickness(self,P_u : float, l : float, B : float, N : float, F_y : float, fi : float = 0.9)->int:
+    def BasePlateThickness(self,P_u : float, l : float, B : float, N : float, F_y : float, fi : float = 0.9, Multiples : int = 1)->int:
         t_min = l * ((2 * P_u) / (fi * F_y * B * N))**0.5
         t_min = math.ceil(t_min)
-        while t_min%5 != 0:
+
+        if Multiples <=0:
+            raise ValueError(f"{Multiples=} not less or equal zero!!!")
+        while t_min%Multiples != 0:
              t_min += 1
-        return round(t_min,2)
+        return t_min
 
     def Get_Y(self,e : float, e_crit : float, P_u : float, N : float, f : float, q_max : float) -> float:
         if e <= e_crit:
@@ -278,6 +281,7 @@ class BasePlate:
 
     def Get_q(self,P_u : float, Y : float) -> float:
         return round(P_u/Y,2)
+
 
 @dataclass
 class AnchorConnection:
